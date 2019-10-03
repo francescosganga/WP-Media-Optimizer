@@ -8,19 +8,11 @@
 * Author URI: http://www.francescosganga.it/
 **/
 
-function wpmowebp_assets() {
-	wp_enqueue_style("eap", plugin_dir_url(__FILE__) . "assets/style.css");
-}
-
-add_action('wp_enqueue_scripts', 'wpmowebp_assets');
-
-add_action("admin_enqueue_scripts", "wpmowebp_admin_assets");
-
 function wpmowebp_init() {
-	register_setting('wpmowebp-options', 'wpmowebp-test', array(
+	register_setting('wpmowebp-options', 'wpmowebp-images-dir', array(
 		'type' => 'string', 
 		'sanitize_callback' => 'sanitize_text_field',
-		'default' => "it"
+		'default' =>  WP_CONTENT_DIR . "/wpmowebp"
 	));
 
 }
@@ -45,7 +37,7 @@ function wpmowebp_options_settings(){
 			<tr valign="top">
 				<th scope="row">Test</th>
 				<td>
-					<input type="text" name="wpmowebp-test" value="<?php echo get_option('wpmowebp-test'); ?>" />
+					<input type="text" name="wpmowebp-images-dir" value="<?php print get_option('wpmowebp-images-dir'); ?>" />
 				</td>
 			</tr>
 		</table>
@@ -64,32 +56,53 @@ function wpmowebp_options_about(){
 	<?php
 }
 
-function wpmwebp_imagetowebp() {
-    if(isset($_GET['image'])) {
-        $image = $_GET['image'];
+function wpmowebp_imagetowebp($realImage) {
+    $realImage = WP_CONTENT_DIR . str_replace("wp-content", "", $realImage);
+    if(file_exists($realImage)) {
+        if(!is_dir(get_option('wpmowebp-images-dir')))
+            mkdir(get_option('wpmowebp-images-dir'), 0755, true);
+        
+        $image = get_option('wpmowebp-images-dir') . "/" . str_replace(WP_CONTENT_DIR, "wp-content/", $realImage);
+        $path = dirname($image);
+        $filename = pathinfo($image, PATHINFO_FILENAME);
         $extension = pathinfo($image, PATHINFO_EXTENSION);
-        switch($extension) {
-            case "jpg":
-                header("Content-Type: image/webp");
-                print imagewebp(imagecreatefromjpeg($image));
-                die();
-                break;
-                
-            case "png":
-                header("Content-Type: image/webp");
-                print imagewebp(imagecreatefrompng($image));
-                die();
-                break;
+        
+        write_log($log);
+        
+        if(!is_dir($path))
+            mkdir($path, 0755, true);
+        
+        if(!file_exists("{$path}/{$filename}.webp")) {
+            switch($extension) {
+                case "jpg":
+                    if(!imagewebp(imagecreatefromjpeg($realImage), "{$path}/{$filename}.webp"))
+                        return false;
+                    break;
+                    
+                case "png":
+                    print "yooo";
+                    if(!imagewebp(imagecreatefrompng($realImage), "{$path}/{$filename}.webp"))
+                        return false;
+                    break;
+            }
+        } else {
+            return true;
         }
+            
+        return true;
     }
 }
 
-add_action('init', 'wpmwebp_imagetowebp');
 
 function filter_content($content) {
-    $content = preg_replace_callback("/https:\/\/www.wrappingtorino.it\/(.*?).(?:jpg|png)/", function($matches) {
-        //print_r($matches);
-        return home_url() . "/?image={$matches[1]}.jpg";
+    $content = preg_replace_callback("/https:\/\/{$_SERVER['HTTP_HOST']}\/([^\/]+\/)?([^\/]+)\/([^\/]+)\/([^\/]+)\/([^\/]+)\/([\w-]+).(png|jpg)/", function($matches) {
+        if(!file_exists(WP_CONTENT_DIR . "/wpmowebp/{$matches[6]}.webp")) {
+            if(!wpmowebp_imagetowebp("{$matches[1]}/{$matches[2]}/{$matches[3]}/{$matches[4]}/{$matches[5]}/{$matches[6]}.{$matches[7]}")) {
+                return $matches[0];   
+            }
+        }
+        
+        return home_url() . "/wp-content/wpmowebp/{$matches[1]}/{$matches[2]}/{$matches[3]}/{$matches[4]}/{$matches[5]}/{$matches[6]}.webp";
     }, $content);
     
     return $content;
