@@ -25,12 +25,6 @@ When anyone access to a Wordpress page, plugin check for images already converte
 If one or more images have not been already converted, the plugin converts them immediately.
 Converted images are stored in a subfolder of wp-content folder: wp-content/wpmowebp
 
-*TROUBLESHOOTING*
-
-If Wordpress go out of memory try to add
-define('WP_MEMORY_LIMIT', '256M');
-to your wp-config.php
-
 Enjoy your new Wordpress Plugin.
 
 == Installation ==
@@ -44,8 +38,5 @@ Enjoy your new Wordpress Plugin.
  
 == Changelog ==
  
-= 1.0.0 =
+= 1.0 =
 * First plugin release
-= 1.0.1 =
-* Added .jpeg support
-* Removed some debug lines
