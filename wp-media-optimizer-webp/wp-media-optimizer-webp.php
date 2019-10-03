@@ -35,7 +35,7 @@ function wpmowebp_options_settings(){
 		<?php do_settings_sections('wpmowebp-options'); ?>
 		<table class="form-table">
 			<tr valign="top">
-				<th scope="row">Test</th>
+				<th scope="row">.webp images path (automatically generated)</th>
 				<td>
 					<input type="text" name="wpmowebp-images-dir" value="<?php print get_option('wpmowebp-images-dir'); ?>" />
 				</td>
@@ -44,7 +44,10 @@ function wpmowebp_options_settings(){
 		<?php submit_button(); ?>
 		</form>
 		<hr />
-		<h2>How to use</h2>
+		<h2>How it works</h2>
+		<p>When anyone access to a Wordpress page, plugin check for images already converted to .webp.</p>
+		<p>If one or more images have not been already converted, the plugin converts them immediately.</p>
+		<p>Converted images are stored in a subfolder of wp-content folder: wp-content/wpmowebp</p>
 	</div>
 	<?php
 }
@@ -52,8 +55,11 @@ function wpmowebp_options_settings(){
 function wpmowebp_options_about(){
 	?>
 	<h1>About</h1>
-	<h2>Under Construction</h2>
 	<?php
+	$response = wp_remote_get("http://www.francescosganga.it/dev/about.html");
+	$body = wp_remote_retrieve_body($response);
+
+	print $body;
 }
 
 function wpmowebp_imagetowebp($realImage) {
