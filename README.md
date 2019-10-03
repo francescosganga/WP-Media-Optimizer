@@ -12,6 +12,12 @@ When anyone access to a Wordpress page, plugin check for images already converte
 If one or more images have not been already converted, the plugin converts them immediately.
 Converted images are stored in a subfolder of wp-content folder: wp-content/wpmowebp
 
+### TROUBLESHOOTING
+
+If Wordpress go out of memory try to add
+define('WP_MEMORY_LIMIT', '256M');
+to your wp-config.php
+
 ### Installing
 
 1. Upload folder inside zip 'wp-media-optimizer-webp.zip' to the '/wp-content/plugins/' directory

@@ -57,54 +57,57 @@ function wpmowebp_options_about(){
 }
 
 function wpmowebp_imagetowebp($realImage) {
-    $realImage = WP_CONTENT_DIR . str_replace("wp-content", "", $realImage);
-    if(file_exists($realImage)) {
-        if(!is_dir(get_option('wpmowebp-images-dir')))
-            mkdir(get_option('wpmowebp-images-dir'), 0755, true);
-        
-        $image = get_option('wpmowebp-images-dir') . "/" . str_replace(WP_CONTENT_DIR, "wp-content/", $realImage);
-        $path = dirname($image);
-        $filename = pathinfo($image, PATHINFO_FILENAME);
-        $extension = pathinfo($image, PATHINFO_EXTENSION);
-        
-        write_log($log);
-        
-        if(!is_dir($path))
-            mkdir($path, 0755, true);
-        
-        if(!file_exists("{$path}/{$filename}.webp")) {
-            switch($extension) {
-                case "jpg":
-                    if(!imagewebp(imagecreatefromjpeg($realImage), "{$path}/{$filename}.webp"))
-                        return false;
-                    break;
-                    
-                case "png":
-                    print "yooo";
-                    if(!imagewebp(imagecreatefrompng($realImage), "{$path}/{$filename}.webp"))
-                        return false;
-                    break;
-            }
-        } else {
-            return true;
-        }
-            
-        return true;
-    }
+	$realImage = WP_CONTENT_DIR . str_replace("wp-content", "", $realImage);
+	if(file_exists($realImage)) {
+		if(!is_dir(get_option('wpmowebp-images-dir')))
+			mkdir(get_option('wpmowebp-images-dir'), 0755, true);
+		
+		$image = get_option('wpmowebp-images-dir') . "/" . str_replace(WP_CONTENT_DIR, "wp-content/", $realImage);
+		$path = dirname($image);
+		$filename = pathinfo($image, PATHINFO_FILENAME);
+		$extension = pathinfo($image, PATHINFO_EXTENSION);
+		
+		if(!is_dir($path))
+			mkdir($path, 0755, true);
+		
+		if(!file_exists("{$path}/{$filename}.webp")) {
+			switch($extension) {
+				case "jpg":
+					if(!imagewebp(imagecreatefromjpeg($realImage), "{$path}/{$filename}.webp"))
+						return false;
+					break;
+				
+				case "jpeg":
+					if(!imagewebp(imagecreatefromjpeg($realImage), "{$path}/{$filename}.webp"))
+						return false;
+					break;
+
+				case "png":
+					print "yooo";
+					if(!imagewebp(imagecreatefrompng($realImage), "{$path}/{$filename}.webp"))
+						return false;
+					break;
+			}
+		} else {
+			return true;
+		}
+			
+		return true;
+	}
 }
 
 
 function filter_content($content) {
-    $content = preg_replace_callback("/https:\/\/{$_SERVER['HTTP_HOST']}\/([^\/]+\/)?([^\/]+)\/([^\/]+)\/([^\/]+)\/([^\/]+)\/([\w-]+).(png|jpg)/", function($matches) {
-        if(!file_exists(WP_CONTENT_DIR . "/wpmowebp/{$matches[6]}.webp")) {
-            if(!wpmowebp_imagetowebp("{$matches[1]}/{$matches[2]}/{$matches[3]}/{$matches[4]}/{$matches[5]}/{$matches[6]}.{$matches[7]}")) {
-                return $matches[0];   
-            }
-        }
-        
-        return home_url() . "/wp-content/wpmowebp/{$matches[1]}/{$matches[2]}/{$matches[3]}/{$matches[4]}/{$matches[5]}/{$matches[6]}.webp";
-    }, $content);
-    
-    return $content;
+	$content = preg_replace_callback("/https:\/\/{$_SERVER['HTTP_HOST']}\/([^\/]+\/)?([^\/]+)\/([^\/]+)\/([^\/]+)\/([^\/]+)\/([\w-]+).(png|jpg|jpeg)/", function($matches) {
+		if(!file_exists(WP_CONTENT_DIR . "/wpmowebp/{$matches[6]}.webp")) {
+			if(!wpmowebp_imagetowebp("{$matches[1]}/{$matches[2]}/{$matches[3]}/{$matches[4]}/{$matches[5]}/{$matches[6]}.{$matches[7]}")) {
+				return $matches[0];   
+			}
+		}
+		
+		return home_url() . "/wp-content/wpmowebp/{$matches[1]}/{$matches[2]}/{$matches[3]}/{$matches[4]}/{$matches[5]}/{$matches[6]}.webp";
+	}, $content);
+	
+	return $content;
 }
 ob_start("filter_content");
