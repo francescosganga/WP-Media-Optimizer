@@ -3,7 +3,7 @@
 * Plugin Name: WP Media Optimizer (.webp)
 * Plugin URI: http://www.francescosganga.it/wordpress/plugin/wp-media-optimizer-webp/
 * Description: Convert your media images to .webp for increase performances
-* Version: 1.0
+* Version: 1.0.4
 * Author: Francesco Sganga
 * Author URI: http://www.francescosganga.it/
 **/
@@ -62,13 +62,14 @@ function wpmowebp_options_about(){
 	print $body;
 }
 
-function wpmowebp_imagetowebp($realImage) {
-	$realImage = WP_CONTENT_DIR . str_replace("wp-content", "", $realImage);
+function wpmowebp_imagetowebp($wpcontentdir, $realImage) {
+	$realImage = WP_CONTENT_DIR . str_replace($wpcontentdir, "", $realImage);
+	return $realImage;
 	if(file_exists($realImage)) {
 		if(!is_dir(get_option('wpmowebp-images-dir')))
 			mkdir(get_option('wpmowebp-images-dir'), 0755, true);
 		
-		$image = get_option('wpmowebp-images-dir') . "/" . str_replace(WP_CONTENT_DIR, "wp-content/", $realImage);
+		$image = get_option('wpmowebp-images-dir') . "/" . str_replace(WP_CONTENT_DIR, "{$wpcontentdir}/", $realImage);
 		$path = dirname($image);
 		$filename = pathinfo($image, PATHINFO_FILENAME);
 		$extension = pathinfo($image, PATHINFO_EXTENSION);
@@ -94,8 +95,6 @@ function wpmowebp_imagetowebp($realImage) {
 						return false;
 					break;
 			}
-		} else {
-			return true;
 		}
 			
 		return true;
@@ -104,14 +103,14 @@ function wpmowebp_imagetowebp($realImage) {
 
 
 function wpmowebp_filter_content($content) {
-	$content = preg_replace_callback("/https:\/\/{$_SERVER['HTTP_HOST']}\/wp-content\/uploads\/([^\/]+)\/([^\/]+)\/([\w-]+).(png|jpg|jpeg)/", function($matches) {
-		if(!file_exists(WP_CONTENT_DIR . "/wpmowebp/wp-content/uploads/{$matches[1]}/{$matches[2]}/{$matches[3]}.webp")) {
-			if(!wpmowebp_imagetowebp("wp-content/uploads/{$matches[1]}/{$matches[2]}/{$matches[3]}.{$matches[4]}")) {
+	$content = preg_replace_callback("/https:\/\/{$_SERVER['HTTP_HOST']}\/([^\/]+)\/uploads\/([^\/]+)\/([^\/]+)\/([\w-]+).(png|jpg|jpeg)/", function($matches) {
+		if(!file_exists(WP_CONTENT_DIR . "/wpmowebp/{$matches[1]}/uploads/{$matches[2]}/{$matches[3]}/{$matches[4]}.webp")) {
+			if(!wpmowebp_imagetowebp($matches[1], "uploads/{$matches[2]}/{$matches[3]}/{$matches[4]}.{$matches[5]}")) {
 				return $matches[0];   
 			}
 		}
 		
-		return home_url() . "/wp-content/wpmowebp/wp-content/uploads/{$matches[1]}/{$matches[2]}/{$matches[3]}.webp";
+		return WP_CONTENT_URL . "/wpmowebp/{$matches[1]}/uploads/{$matches[2]}/{$matches[3]}/{$matches[4]}.webp";
 	}, $content);
 	
 	return $content;

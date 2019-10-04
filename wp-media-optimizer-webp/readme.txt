@@ -5,7 +5,7 @@ Tags: media, optimizer, reduce, image, size, webp
 Requires at least: 5.1
 Tested up to: 5.3
 Requires PHP: 5.6
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
  
@@ -54,3 +54,5 @@ Enjoy your new Wordpress Plugin.
 * Fixed about section
 = 1.0.3 =
 * Some fixes for WP Plugins Directory
+= 1.0.4 =
+* Fixed dynamic wp-content directory
