@@ -103,17 +103,17 @@ function wpmowebp_imagetowebp($realImage) {
 }
 
 
-function filter_content($content) {
-	$content = preg_replace_callback("/https:\/\/{$_SERVER['HTTP_HOST']}\/([^\/]+\/)?([^\/]+)\/([^\/]+)\/([^\/]+)\/([^\/]+)\/([\w-]+).(png|jpg|jpeg)/", function($matches) {
-		if(!file_exists(WP_CONTENT_DIR . "/wpmowebp/{$matches[6]}.webp")) {
-			if(!wpmowebp_imagetowebp("{$matches[1]}/{$matches[2]}/{$matches[3]}/{$matches[4]}/{$matches[5]}/{$matches[6]}.{$matches[7]}")) {
+function wpmowebp_filter_content($content) {
+	$content = preg_replace_callback("/https:\/\/{$_SERVER['HTTP_HOST']}\/wp-content\/uploads\/([^\/]+)\/([^\/]+)\/([\w-]+).(png|jpg|jpeg)/", function($matches) {
+		if(!file_exists(WP_CONTENT_DIR . "/wpmowebp/wp-content/uploads/{$matches[1]}/{$matches[2]}/{$matches[3]}.webp")) {
+			if(!wpmowebp_imagetowebp("wp-content/uploads/{$matches[1]}/{$matches[2]}/{$matches[3]}.{$matches[4]}")) {
 				return $matches[0];   
 			}
 		}
 		
-		return home_url() . "/wp-content/wpmowebp/{$matches[1]}/{$matches[2]}/{$matches[3]}/{$matches[4]}/{$matches[5]}/{$matches[6]}.webp";
+		return home_url() . "/wp-content/wpmowebp/wp-content/uploads/{$matches[1]}/{$matches[2]}/{$matches[3]}.webp";
 	}, $content);
 	
 	return $content;
 }
-ob_start("filter_content");
+ob_start('wpmowebp_filter_content');
