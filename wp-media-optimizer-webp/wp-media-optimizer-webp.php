@@ -3,7 +3,7 @@
 * Plugin Name: WP Media Optimizer (.webp)
 * Plugin URI: http://www.francescosganga.it/wordpress/plugin/wp-media-optimizer-webp/
 * Description: Convert your media images to .webp for increase performances
-* Version: 1.0.4
+* Version: 1.0.6
 * Author: Francesco Sganga
 * Author URI: http://www.francescosganga.it/
 **/
@@ -103,15 +103,17 @@ function wpmowebp_imagetowebp($wpcontentdir, $realImage) {
 
 
 function wpmowebp_filter_content($content) {
-	$content = preg_replace_callback("/https:\/\/{$_SERVER['HTTP_HOST']}\/([^\/]+)\/uploads\/([^\/]+)\/([^\/]+)\/([\w-]+).(png|jpg|jpeg)/", function($matches) {
-		if(!file_exists(WP_CONTENT_DIR . "/wpmowebp/{$matches[1]}/uploads/{$matches[2]}/{$matches[3]}/{$matches[4]}.webp")) {
-			if(!wpmowebp_imagetowebp($matches[1], "uploads/{$matches[2]}/{$matches[3]}/{$matches[4]}.{$matches[5]}")) {
-				return $matches[0];   
+	if(stripos($_SERVER['HTTP_USER_AGENT'], 'Safari') === false) {
+		$content = preg_replace_callback("/https:\/\/{$_SERVER['HTTP_HOST']}\/([^\/]+)\/uploads\/([^\/]+)\/([^\/]+)\/([\w-]+).(png|jpg|jpeg)/", function($matches) {
+			if(!file_exists(WP_CONTENT_DIR . "/wpmowebp/{$matches[1]}/uploads/{$matches[2]}/{$matches[3]}/{$matches[4]}.webp")) {
+				if(!wpmowebp_imagetowebp($matches[1], "uploads/{$matches[2]}/{$matches[3]}/{$matches[4]}.{$matches[5]}")) {
+					return $matches[0];   
+				}
 			}
-		}
-		
-		return WP_CONTENT_URL . "/wpmowebp/{$matches[1]}/uploads/{$matches[2]}/{$matches[3]}/{$matches[4]}.webp";
-	}, $content);
+			
+			return WP_CONTENT_URL . "/wpmowebp/{$matches[1]}/uploads/{$matches[2]}/{$matches[3]}/{$matches[4]}.webp";
+		}, $content);
+	}
 	
 	return $content;
 }
