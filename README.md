@@ -5,6 +5,7 @@ Automatically optimize images in your Wordpress site by converting them to .webp
 ## Getting Started
 
 Simply install and activate it, and your images will be optimized.
+You can see full readme from (wordpress official website)[https://it.wordpress.org/plugins/wp-media-optimizer-webp/]
 
 ### How it works
 
