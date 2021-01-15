@@ -396,6 +396,8 @@ function wpmowebp_check_activation_notice_hook() {
 }
 
 function wpmowebp_filter_content($content) {
+	if(is_admin() && && (!defined( 'DOING_AJAX' ) || ! DOING_AJAX))
+		return $content;
 	$currentBrowser = wpmowebp_detect_browser();
 	if(wpmowebp_detect_browser() != "Safari" and wpmowebp_detect_browser() != false) {
 		$prot = isset($_SERVER["HTTPS"]) ? 'https' : 'http';
