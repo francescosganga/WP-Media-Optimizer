@@ -3,9 +3,9 @@ Contributors: francescosganga
 Donate link: http://www.francescosganga.it/
 Tags: media, optimizer, reduce, image, size, webp
 Requires at least: 5.1
-Tested up to: 5.3
+Tested up to: 5.5.3
 Requires PHP: 5.6
-Stable tag: 1.2.0
+Stable tag: 1.2.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
  
@@ -17,12 +17,18 @@ Optimize images (jpg, png) in your Wordpress site by converting them to .webp ex
 WP Media Optimizer (.webp) only works with Firefox and Chrome (at this time).
 If you are using different browser (such as Safari or Opera) images will be not displayed in .webp.
 
+Now with LAZY LOAD FEATURE!
+
+ABOVE THE FOLD Feature is not really "for dummies" but with some tests you can really improve your PAGE SPEED RATE! Hope you can appreciate this feature.
+
 **USAGE**
 
 Simply install and activate it, and your images will be optimized.
 
 You can send a Feature Request from the Plugin Settings Page.
 I hope you will use this form so I can add new features to this simple and wonderfurl plugin!
+
+You can enable the new Lazy Load Feature by making a little donation to the author, you will receive a life time token for this feature and future improvements.
 
 **HOW IT WORKS**
 
@@ -98,3 +104,20 @@ Enjoy your new Wordpress Plugin.
 = 1.2.0 =
 * Added admin notice during plugin activation
 * Added admin notice for remember users to review the plugin
+= 1.2.1 =
+* Improved image recognition
+= 1.2.2 =
+* Added Lazy Load Feature!
+= 1.2.3 =
+* Enabled way to disable Lazy Load Feature
+= 1.2.4 =
+* Added a Wonderful ABOVE THE FOLD FEATURE!
+= 1.2.5 =
+* Added way to enable/disable above the fold feature
+* Fixed bug retrieving css/js resources
+* Resourses will all whitelisted (no effect on your website) in the first fetch or after purging
+= 1.2.6 =
+* Fixed bug for some images name while converting them to webp
+* Added "Minify HTML" feature
+= 1.2.7 =
+* Fixed bug
